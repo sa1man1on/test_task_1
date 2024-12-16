@@ -1,0 +1,44 @@
+function generateExpressions(digits: number[], target: number): string[] {
+    const results: string[] = [];
+
+    function explore(index: number, expression: string, currentSum: number, lastNumber: number): void {
+        if (index === digits.length) {
+            if (currentSum === target) {
+                results.push(expression);
+            }
+            return;
+        }
+
+        const currentDigit = digits[index];
+
+        explore(index + 1, `${expression}+${currentDigit}`, currentSum + currentDigit, currentDigit);
+
+        explore(index + 1, `${expression}-${currentDigit}`, currentSum - currentDigit, -currentDigit);
+
+        const mergedNumber = lastNumber >= 0
+            ? lastNumber * 10 + currentDigit
+            : lastNumber * 10 - currentDigit;
+
+        const updatedSum = currentSum - lastNumber + mergedNumber;
+        explore(index + 1, `${expression}${currentDigit}`, updatedSum, mergedNumber);
+    }
+
+    const firstDigit = digits[0];
+    explore(1, firstDigit.toString(), firstDigit, firstDigit);
+
+    return results;
+}
+
+const digits = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
+const target = 200;
+
+const expressions = generateExpressions(digits, target);
+
+if (expressions.length > 0) {
+    console.log("Найденные выражения:");
+    for (const expr of expressions) {
+        console.log(`${expr}=${target}`);
+    }
+} else {
+    console.log("Решений не найдено.");
+}
